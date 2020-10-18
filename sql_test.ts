@@ -5,12 +5,12 @@ Deno.test("select", () => {
     let firstName = 22;
     let lastName = "Tendulkar";
       
-    console.log(sql`select * from User ${where(w => {
+    console.log(sql`select * from User ${where($ => {
         if (firstName > 10) {
-            w.and`firstName = ${firstName}`;
+            $.and`firstName = ${firstName}`;
         }
         if (lastName == "Tendulkar") {
-            w.and`lastName = ${raw(lastName)}`;
+            $.and`lastName = ${raw(lastName)}`;
         }
     })}`);
 });
