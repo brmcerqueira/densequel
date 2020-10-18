@@ -1,5 +1,6 @@
-import { assert, assertEquals, assertStrictEquals, assertThrows } from "https://deno.land/std/testing/asserts.ts";
-import { raw, sql, where } from "./sql.ts";
+import { where } from "./nested/where.ts";
+import { raw } from "./raw.ts";
+import { sql } from "./sql.ts";
 
 Deno.test("select", () => {  
     let firstName = 22;
