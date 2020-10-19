@@ -20,8 +20,4 @@ export class NestedBuilder {
     protected putTemplate(strings: TemplateStringsArray, ...expressions: any[]) {
         sqlTemplate(this.sqlBuilder, strings, ...expressions);
     }
-
-    public raw(strings: TemplateStringsArray, ...expressions: any[]) {
-        this.putTemplate(strings, ...expressions);
-    }
 }
