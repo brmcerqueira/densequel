@@ -1,9 +1,9 @@
 import { SqlBuilder } from "../sqlBuilder.ts";
 import { NestedBuilder } from "./nestedBuilder.ts";
-import { NestedExpression } from "./nestedExpression.ts";
+import { NestedBuilderExpression } from "./nestedExpression.ts";
 
-export function where(setup: (w: WhereBuilder) => void): NestedExpression<WhereBuilder> {
-    return new NestedExpression(sqlBuilder => new WhereBuilder(sqlBuilder), setup);
+export function where(setup: (w: WhereBuilder) => void): NestedBuilderExpression<WhereBuilder> {
+    return new NestedBuilderExpression(sqlBuilder => new WhereBuilder(sqlBuilder), setup);
 }
 
 class WhereBuilder extends NestedBuilder {

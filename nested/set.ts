@@ -1,9 +1,9 @@
 import { SqlBuilder } from "../sqlBuilder.ts";
 import { NestedBuilder } from "./nestedBuilder.ts";
-import { NestedExpression } from "./nestedExpression.ts";
+import { NestedBuilderExpression } from "./nestedExpression.ts";
 
-export function set(setup: (s: SetBuilder) => void): NestedExpression<SetBuilder> {
-    return new NestedExpression(sqlBuilder => new SetBuilder(sqlBuilder), setup);
+export function set(setup: (s: SetBuilder) => void): NestedBuilderExpression<SetBuilder> {
+    return new NestedBuilderExpression(sqlBuilder => new SetBuilder(sqlBuilder), setup);
 } 
 
 class SetBuilder extends NestedBuilder {
