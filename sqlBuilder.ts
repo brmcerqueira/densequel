@@ -1,3 +1,5 @@
+import { NestedExpression } from "./nested/nestedExpression.ts";
+
 export class SqlBuilder {
     private _args: { [key: string]: any } = {};
     private index = 1;
@@ -11,9 +13,14 @@ export class SqlBuilder {
     }
 
     public arg(expression: any) {
-        const key = `@arg${this.index++}`;
-        this._args[key] = expression;
-        this.put(key);
+        if (expression instanceof NestedExpression) {
+            expression.build(this);
+        }
+        else {
+            const key = `@arg${this.index++}`;
+            this._args[key] = expression;
+            this.put(key);
+        }
     }
 
     public get args(): { [key: string]: any } {

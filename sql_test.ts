@@ -1,5 +1,6 @@
+import { $in } from "./nested/in.ts";
+import { raw } from "./nested/raw.ts";
 import { where } from "./nested/where.ts";
-import { raw } from "./raw.ts";
 import { sql } from "./sql.ts";
 
 Deno.test("select", () => {  
@@ -13,5 +14,6 @@ Deno.test("select", () => {
         if (lastName == "Tendulkar") {
             $.and`lastName = ${raw(lastName)}`;
         }
+        $.and`age ${$in(raw(17, 18, 19), 20)}`;
     })}`);
 });

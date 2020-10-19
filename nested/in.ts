@@ -1,4 +1,3 @@
-import { RawExpression } from "../raw.ts";
 import { SqlBuilder } from "../sqlBuilder.ts";
 import { NestedExpression } from "./nestedExpression.ts";
 
@@ -13,17 +12,12 @@ class InExpression extends NestedExpression {
 
     public build(sqlBuilder: SqlBuilder) {
         sqlBuilder.put("IN(");
-        this.parameters.forEach((item, i) => {
-            if (i > 0) {
+        this.parameters.forEach((item, index) => {
+            if (index > 0) {
                 sqlBuilder.put(",");
             }
             
-            if (item instanceof RawExpression) {
-                sqlBuilder.put(item.toString());
-            }
-            else {
-                sqlBuilder.arg(item);
-            }
+            sqlBuilder.arg(item);
         });
         sqlBuilder.put(")");
     }
