@@ -1,23 +1,23 @@
 import { SqlBuilder } from "../sqlBuilder.ts";
 import { NestedExpression } from "./nestedExpression.ts";
 
-export function $in(...parameters: any): NestedExpression {
-    return new InExpression(parameters);
-} 
+export function tuple(...parameters: any[]): TupleExpression {
+    return new TupleExpression(parameters);
+}
 
-class InExpression extends NestedExpression {
+export class TupleExpression extends NestedExpression {
     constructor(private parameters: any[]) {
         super();
     }
 
     public build(sqlBuilder: SqlBuilder) {
-        sqlBuilder.put("IN(");
+        sqlBuilder.put("(");
         this.parameters.forEach((item, index) => {
             if (index > 0) {
                 sqlBuilder.put(",");
             }
             
-            sqlBuilder.arg(item);
+            sqlBuilder.raw(item);
         });
         sqlBuilder.put(")");
     }

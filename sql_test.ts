@@ -1,6 +1,7 @@
+import { arg, raw } from "./nested/arg.ts";
+import { bulk, bulkMap } from "./nested/bulk.ts";
 import { dynamic } from "./nested/dynamic.ts";
-import { $in } from "./nested/in.ts";
-import { raw } from "./nested/raw.ts";
+import { tuple } from "./nested/tuple.ts";
 import { where } from "./nested/where.ts";
 import { sql } from "./sql.ts";
 
@@ -15,7 +16,7 @@ Deno.test("select", () => {
         if (lastName == "Tendulkar") {
             $.and`lastName = ${raw(lastName)}`;
         }
-        $.and`age ${$in(raw(17, 18, 19), 20)}`;
+        $.and`age in${tuple(arg(16, 17), 18, 19, 20)}`;
     })}`);
 });
 
@@ -31,6 +32,25 @@ Deno.test("update dynamic", () => {
             $`lastName = ${raw(lastName)}`;
         }
     })}${where($ => {
-        $.and`age ${$in(raw(17, 18, 19), 20)}`;
+        $.and`age in${tuple(arg(16, 17), 18, 19, 20)}`;
     })}`);
+});
+
+Deno.test("bulk insert", () => {  
+    console.log(sql`insert into User (firstName, lastName) values ${bulk(
+        tuple("Name1", "LastName1"),
+        tuple("Name2", "LastName2"),
+        tuple("Name3", "LastName3")
+    )}`);
+});
+
+Deno.test("bulkMap insert", () => {
+    const array: { firstName: string, lastName: string }[] = [
+        { firstName:"Name1", lastName:"LastName1" },
+        { firstName:"Name2", lastName:"LastName2" },
+        { firstName:"Name3", lastName: "LastName3" }
+    ];
+    
+    console.log(sql`insert into User (firstName, lastName) values 
+    ${bulkMap(array, item => tuple(item.firstName, item.lastName))}`);
 });

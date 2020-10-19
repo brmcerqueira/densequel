@@ -11,6 +11,18 @@ export class SqlBuilder {
         }
         this.content += value.trim();
     }
+    
+    public raw(expression: any) {
+        if (expression instanceof NestedExpression) {
+            expression.build(this);
+        }
+        else if (typeof expression == "string") {
+            this.put(`'${expression}'`);
+        } 
+        else {
+            this.put(expression.toString());
+        } 
+    }
 
     public arg(expression: any) {
         if (expression instanceof NestedExpression) {
