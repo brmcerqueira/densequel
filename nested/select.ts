@@ -19,7 +19,7 @@ class SelectBuilder extends NestedBuilder implements IFinalizable {
         super(sqlBuilder, init);
     }
 
-    public get(strings: TemplateStringsArray, ...expressions: any[]) {
+    public col(strings: TemplateStringsArray, ...expressions: any[]) {
         this.adjustInit(",");
         this.putTemplate(strings, ...expressions);
     }
