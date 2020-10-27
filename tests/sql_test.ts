@@ -1,5 +1,8 @@
 import { arg, raw, bulk, bulkMap, dynamic, tuple, where, sql } from "../mod.ts";
 
+const connectionString = Deno.env.get("TEST_CONNECTION_STRING");
+console.log(connectionString);
+
 Deno.test("select", () => {  
     let firstName = 22;
     let lastName = "Tendulkar";
