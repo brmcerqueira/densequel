@@ -7,7 +7,7 @@ services:
     container_name: test-database-postgres
     environment:
       POSTGRES_DB: sakila
-      POSTGRES_USER: test
+      POSTGRES_USER: postgres
       POSTGRES_PASSWORD: test
     ports:
       - 5432:5432
