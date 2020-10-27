@@ -1,9 +1,4 @@
-import { arg, raw } from "./nested/arg.ts";
-import { bulk, bulkMap } from "./nested/bulk.ts";
-import { dynamic } from "./nested/dynamic.ts";
-import { tuple } from "./nested/tuple.ts";
-import { where } from "./nested/where.ts";
-import { sql } from "./sql.ts";
+import { arg, raw, bulk, bulkMap, dynamic, tuple, where, sql } from "../mod.ts";
 
 Deno.test("select", () => {  
     let firstName = 22;
