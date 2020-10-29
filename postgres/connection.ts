@@ -27,8 +27,17 @@ export class Connection implements SqlConnection {
         const result = await this.client.query(args.length > 0 ? {
             text: sqlBuilder.toString(),
             args: args
-          } : sqlBuilder.toString());
-        return <T[]> result.rowsOfObjects();  
+        } : sqlBuilder.toString());
+
+        return <T[]> (sqlBuilder.binds.length > 0 ? result.rows.map(row => {
+            const tuple: { [key: string]: any } = {};
+
+            result.rowDescription.columns.forEach((column, index) => {
+                tuple[sqlBuilder.binds[index] || column.name] = row[index];
+            });
+        
+            return tuple;
+        }) : result.rowsOfObjects());
     }
 
     public async open() {

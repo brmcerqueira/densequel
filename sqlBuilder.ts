@@ -2,6 +2,7 @@ import { NestedExpression } from "./nested/nestedExpression.ts";
 import { SqlProvider } from "./sqlProvider.ts";
 
 export class SqlBuilder {
+    private _binds: string[] = [];
     private _args: { [key: string]: any } = {};
     private index = 1;
     private content = "";
@@ -40,11 +41,20 @@ export class SqlBuilder {
         }
     }
 
+    public bind(name: string) {
+        this._binds.push(name);
+    }
+
+    public get binds(): string[] {
+        return this._binds;
+    }
+
     public get args(): { [key: string]: any } {
         return this._args;
     }
 
     public toString(): string {
+        console.log(this.content);
         return this.content;
     }
 }  

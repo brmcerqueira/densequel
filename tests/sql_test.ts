@@ -1,3 +1,4 @@
+import { bind } from "../nested/bind.ts";
 import { arg, raw, bulk, bulkMap, dynamic, tuple, where, Connection } from "../postgres/mod.ts";
 
 const connectionString = <string> Deno.env.get("TEST_CONNECTION_STRING");
@@ -6,8 +7,16 @@ console.log(connectionString);
 Deno.test("select", async () => {  
     const connection = new Connection(connectionString);
     await connection.open();
-    const limit = 2;
-    const result = await connection.sql`SELECT * FROM customer LIMIT ${limit}`;
+    const firstName = "B";
+    const limit = 10;
+    const result = await connection.sql`SELECT 
+    first_name ${bind("firstName", true)}, 
+    last_name ${bind("lastName", true)}
+    FROM customer ${where($ => {
+        if (firstName) {
+            $.and`upper(first_name) LIKE upper(${`${firstName}%`})`;
+        }
+    })} LIMIT ${limit}`;
     console.log(result);
     await connection.close();
 });
