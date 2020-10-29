@@ -12,7 +12,7 @@ task("test-postgres", [], async function() {
     await delay(10000);
     await sh("deno test -c ../tsconfig.json --unstable --allow-all", {
         env: {
-            TEST_CONNECTION_STRING: "Host=test-database-postgres;Database=sakila;Username=postgres;Password=test"
+            TEST_CONNECTION_STRING: "postgres://postgres:test@localhost:5432/sakila"
         }
     });
     await sh("docker-compose -f docker-compose-postgres.yml down --remove-orphans");

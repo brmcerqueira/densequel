@@ -1,9 +1,14 @@
 import { NestedExpression } from "./nested/nestedExpression.ts";
+import { SqlProvider } from "./sqlProvider.ts";
 
 export class SqlBuilder {
     private _args: { [key: string]: any } = {};
     private index = 1;
     private content = "";
+    
+    constructor(private provider: SqlProvider) {
+ 
+    }
 
     public put(value: string) {
         if (this.content != "") {
@@ -17,7 +22,7 @@ export class SqlBuilder {
             expression.build(this);
         }
         else if (typeof expression == "string") {
-            this.put(`'${expression}'`);
+            this.put(this.provider.parseString(expression));
         } 
         else {
             this.put(expression.toString());
@@ -29,7 +34,7 @@ export class SqlBuilder {
             expression.build(this);
         }
         else {
-            const key = `@arg${this.index++}`;
+            const key = this.provider.parseArg(this.index++);
             this._args[key] = expression;
             this.put(key);
         }

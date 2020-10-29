@@ -1,8 +1,17 @@
-import { arg, raw, bulk, bulkMap, dynamic, tuple, where, sql } from "../mod.ts";
+import { arg, raw, bulk, bulkMap, dynamic, tuple, where, Connection } from "../postgres/mod.ts";
 
-const connectionString = Deno.env.get("TEST_CONNECTION_STRING");
+const connectionString = <string> Deno.env.get("TEST_CONNECTION_STRING");
 console.log(connectionString);
 
+Deno.test("select", async () => {  
+    const connection = new Connection(connectionString);
+    await connection.open();
+    const result = await connection.sql`select * from customer`;
+    console.log(result);
+    await connection.close();
+});
+
+/*
 Deno.test("select", () => {  
     let firstName = 22;
     let lastName = "Tendulkar";
@@ -51,4 +60,4 @@ Deno.test("bulkMap insert", () => {
     
     console.log(sql`insert into User (firstName, lastName) values 
     ${bulkMap(array, item => tuple(item.firstName, item.lastName))}`);
-});
+});*/
