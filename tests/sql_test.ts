@@ -6,7 +6,7 @@ console.log(connectionString);
 Deno.test("select", async () => {  
     const connection = new Connection(connectionString);
     await connection.open();
-    const result = await connection.sql`select * from customer`;
+    const result = await connection.sql`SELECT * FROM customer LIMIT 5`;
     console.log(result);
     await connection.close();
 });
