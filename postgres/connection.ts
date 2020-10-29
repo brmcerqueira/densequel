@@ -19,7 +19,7 @@ export class Connection implements SqlConnection {
     private client: Client;
     private provider: Provider;
 
-    constructor(config: ConnectionOptions | string) {
+    constructor(config?: ConnectionOptions | string) {
         this.client = new Client(config);
         this.provider = new Provider();          
     }
