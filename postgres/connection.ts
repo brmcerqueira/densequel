@@ -3,7 +3,17 @@ import { ConnectionOptions } from "https://deno.land/x/postgres/connection_param
 import { SqlConnection } from "../sqlConnection.ts";
 import { sqlTemplate } from "../sqlTemplate.ts";
 import { SqlBuilder } from "../sqlBuilder.ts";
-import { Provider } from "./provider.ts";
+import { SqlProvider } from "../sqlProvider.ts";
+
+class Provider implements SqlProvider {
+    public parseString(expression: string): string {
+        return `'${expression}'`;
+    }
+
+    public parseArg(index: number): string {
+        return `$${index}`;
+    }
+}
 
 export class Connection implements SqlConnection {
     private client: Client;

@@ -8,11 +8,11 @@ task("alias", [], async function() {
 });
 
 task("docker-compose-postgres-up", [], async function() {
-    await sh("docker-compose -f docker-compose-postgres.yml up -d");
+    await sh("docker-compose -f ./postgres/docker-compose.yml up -d");
 });
 
 task("docker-compose-postgres-down", [], async function() {
-    await sh("docker-compose -f docker-compose-postgres.yml down --remove-orphans");
+    await sh("docker-compose -f ./postgres/docker-compose.yml down --remove-orphans");
 });
 
 task("test-postgres", [], async function() {     
