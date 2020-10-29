@@ -10,8 +10,8 @@ Deno.test("select", async () => {
     const firstName = "B";
     const limit = 10;
     const result = await connection.sql`SELECT 
-    first_name ${bind("firstName", true)}, 
-    last_name ${bind("lastName", true)}
+    first_name ${bind("firstName")}, 
+    last_name ${bind("lastName")}
     FROM customer ${where($ => {
         if (firstName) {
             $.and`upper(first_name) LIKE upper(${`${firstName}%`})`;
