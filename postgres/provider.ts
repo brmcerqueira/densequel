@@ -6,6 +6,6 @@ export class Provider implements SqlProvider {
     }
 
     public parseArg(index: number): string {
-        return `@arg${index}`;
+        return `$${index}`;
     }
 }

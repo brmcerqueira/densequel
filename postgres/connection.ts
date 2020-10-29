@@ -17,7 +17,17 @@ export class Connection implements SqlConnection {
     public async sql<T>(strings: TemplateStringsArray, ...expressions: any[]): Promise<T[]> {
         const sqlBuilder = new SqlBuilder(this.provider);
         sqlTemplate(sqlBuilder, strings, ...expressions);
-        const result = await this.client.query(sqlBuilder.toString());
+
+        const args: any[] = [];
+
+        for (const key in sqlBuilder.args) {
+            args.push(sqlBuilder.args[key]);
+        }
+
+        const result = await this.client.query(args.length > 0 ? {
+            text: sqlBuilder.toString(),
+            args: args
+          } : sqlBuilder.toString());
         return <T[]> result.rowsOfObjects();  
     }
 
