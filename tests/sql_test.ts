@@ -1,5 +1,4 @@
-import { bind } from "../nested/bind.ts";
-import { arg, raw, bulk, bulkMap, dynamic, tuple, where, Connection } from "../postgres/mod.ts";
+import { arg, bind, raw, bulk, bulkMap, dynamic, tuple, where, Connection } from "../postgres/mod.ts";
 
 const connectionString = <string> Deno.env.get("TEST_CONNECTION_STRING");
 console.log(connectionString);
