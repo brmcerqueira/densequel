@@ -14,11 +14,11 @@ export class Connection implements SqlConnection {
         this.provider = new Provider();          
     }
 
-    public async sql(strings: TemplateStringsArray, ...expressions: any[]): Promise<any[]> {
+    public async sql<T>(strings: TemplateStringsArray, ...expressions: any[]): Promise<T[]> {
         const sqlBuilder = new SqlBuilder(this.provider);
         sqlTemplate(sqlBuilder, strings, ...expressions);
         const result = await this.client.query(sqlBuilder.toString());
-        return result.rows;  
+        return <T[]> result.rowsOfObjects();  
     }
 
     public async open() {
