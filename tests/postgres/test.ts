@@ -1,14 +1,14 @@
-import { arg, bind, raw, bulk, bulkMap, dynamic, tuple, where, Connection } from "../../postgres/mod.ts";
+import { assert, assertEquals } from "https://deno.land/std/testing/asserts.ts";
+import { bind, bulk, bulkMap, dynamic, tuple, where, Connection } from "../../postgres/mod.ts";
 
 const connectionString = <string> Deno.env.get("TEST_CONNECTION_STRING");
-console.log(connectionString);
 
 Deno.test("select", async () => {  
     const connection = new Connection(connectionString);
     await connection.open();
     const firstName = "B";
     const limit = 10;
-    const result = await connection.sql`SELECT 
+    const result: any[] = <any[]> await connection.sql`SELECT 
     first_name ${bind("firstName")}, 
     last_name ${bind("lastName")}
     FROM customer ${where($ => {
@@ -16,57 +16,53 @@ Deno.test("select", async () => {
             $.and`upper(first_name) LIKE upper(${`${firstName}%`})`;
         }
     })} LIMIT ${limit}`;
-    console.log(result);
+    assert(result.length > 0);
     await connection.close();
 });
 
-/*
-Deno.test("select", () => {  
-    let firstName = 22;
-    let lastName = "Tendulkar";
-      
-    console.log(sql`select * from User ${where($ => {
-        if (firstName > 10) {
-            $.and`firstName = ${firstName}`;
-        }
-        if (lastName == "Tendulkar") {
-            $.and`lastName = ${raw(lastName)}`;
-        }
-        $.and`age in${tuple(arg(16, 17), 18, 19, 20)}`;
-    })}`);
-});
+Deno.test("update dynamic", async () => {  
+    const connection = new Connection(connectionString);
+    await connection.open(); 
 
-Deno.test("update dynamic", () => {  
-    let firstName = 22;
-    let lastName = "Tendulkar";
-      
-    console.log(sql`update User set ${dynamic(",", $ => {
-        if (firstName > 10) {
-            $`firstName = ${firstName}`;
-        }
-        if (lastName == "Tendulkar") {
-            $`lastName = ${raw(lastName)}`;
+    const length = 20;
+    const whereLength = 10;
+    
+    const result = await connection.sql`UPDATE film SET ${dynamic(",", $ => {
+        if (length) {
+            $`length = length + ${length}`;
         }
     })}${where($ => {
-        $.and`age in${tuple(arg(16, 17), 18, 19, 20)}`;
-    })}`);
+        if (whereLength) {
+            $.and`length >= ${whereLength}`;
+        }      
+    })}`;
+
+    assert(result > 0);
+    await connection.close();
 });
 
-Deno.test("bulk insert", () => {  
-    console.log(sql`insert into User (firstName, lastName) values ${bulk(
-        tuple("Name1", "LastName1"),
-        tuple("Name2", "LastName2"),
-        tuple("Name3", "LastName3")
-    )}`);
+Deno.test("bulk insert", async () => { 
+    const connection = new Connection(connectionString);
+    await connection.open(); 
+    const result = await connection.sql`INSERT INTO category (name) VALUES ${bulk(
+        tuple("bulk insert 1"),
+        tuple("bulk insert 2"),
+        tuple("bulk insert 3")
+    )}`
+    assertEquals(result, 3);
+    await connection.close();
 });
 
-Deno.test("bulkMap insert", () => {
-    const array: { firstName: string, lastName: string }[] = [
-        { firstName:"Name1", lastName:"LastName1" },
-        { firstName:"Name2", lastName:"LastName2" },
-        { firstName:"Name3", lastName: "LastName3" }
+Deno.test("bulkMap insert", async () => {
+    const array: { name: string }[] = [
+        { name: "bulkMap insert 1" },
+        { name: "bulkMap insert 2" },
+        { name: "bulkMap insert 3" }
     ];
-    
-    console.log(sql`insert into User (firstName, lastName) values 
-    ${bulkMap(array, item => tuple(item.firstName, item.lastName))}`);
-});*/
+    const connection = new Connection(connectionString);
+    await connection.open(); 
+    const result = await connection.sql`INSERT INTO category (name) VALUES 
+    ${bulkMap(array, item => tuple(item.name))}`;
+    assertEquals(result, 3);
+    await connection.close();
+});

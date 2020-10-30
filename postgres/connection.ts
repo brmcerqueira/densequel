@@ -28,7 +28,7 @@ export class Connection implements SqlConnection {
         this.provider = new Provider();          
     }
 
-    public async sql<T>(strings: TemplateStringsArray, ...expressions: any[]): Promise<T[]> {
+    public async sql<T>(strings: TemplateStringsArray, ...expressions: any[]): Promise<T[] | number> {
         const sqlBuilder = new SqlBuilder(this.provider);
         sqlTemplate(sqlBuilder, strings, ...expressions);
 
@@ -43,15 +43,25 @@ export class Connection implements SqlConnection {
             args: args
         } : sqlBuilder.toString());
 
-        return <T[]> (sqlBuilder.binds.length > 0 ? result.rows.map(row => {
-            const tuple: { [key: string]: any } = {};
+        result.rowCount
 
-            result.rowDescription.columns.forEach((column, index) => {
-                tuple[sqlBuilder.binds[index] || column.name] = row[index];
+        if (sqlBuilder.binds.length > 0) {
+            return result.rows.map(row => {
+                const tuple: { [key: string]: any } = {};
+    
+                result.rowDescription.columns.forEach((column, index) => {
+                    tuple[sqlBuilder.binds[index] || column.name] = row[index];
+                });
+            
+                return <T> tuple;
             });
-        
-            return tuple;
-        }) : result.rowsOfObjects());
+        }
+        else if (result.rows.length > 0) {
+            return <T[]> result.rowsOfObjects();
+        }
+        else {
+            return result.rowCount || 0;
+        }
     }
 
     public async open() {
