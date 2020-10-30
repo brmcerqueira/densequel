@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "importsNotUsedAsValues": "preserve",
+    "isolatedModules": false,
     "plugins": [
       {
         "name": "typescript-deno-plugin",

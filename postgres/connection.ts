@@ -10,8 +10,12 @@ class Provider implements SqlProvider {
         return `'${expression}'`;
     }
 
-    public parseArg(index: number): string {
-        return `$${index}`;
+    public parseArg(index: number): { key: string, value: string } {
+        const value = `$${index}`;
+        return {
+            key: value,
+            value: value
+        };
     }
 }
 

@@ -9,8 +9,11 @@ class Provider implements SqlProvider {
         return `'${expression}'`;
     }
 
-    public parseArg(index: number): string {
-        return "?";
+    public parseArg(index: number): { key: string, value: string } {
+        return {
+            key: index.toString(),
+            value: "?"
+        };
     }
 }
 

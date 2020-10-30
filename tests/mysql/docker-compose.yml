@@ -1,0 +1,14 @@
+version: "3.3"
+
+services:
+  database:
+    image: mariadb
+    restart: always
+    container_name: test-database-mariadb
+    environment:
+      MYSQL_DATABASE: sakila
+      MYSQL_ROOT_PASSWORD: test
+    ports:
+      - 3306:3306
+    volumes:
+      - ./entrypoint:/docker-entrypoint-initdb.d

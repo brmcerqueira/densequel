@@ -35,9 +35,9 @@ export class SqlBuilder {
             expression.build(this);
         }
         else {
-            const key = this.provider.parseArg(this.index++);
-            this._args[key] = expression;
-            this.put(key);
+            const result = this.provider.parseArg(this.index++);
+            this._args[result.key] = expression;
+            this.put(result.value);
         }
     }
 
@@ -55,6 +55,7 @@ export class SqlBuilder {
 
     public toString(): string {
         console.log(this.content);
+        console.log(this._args);
         return this.content;
     }
 }  
