@@ -63,6 +63,6 @@ Deno.test("bulkMap insert", async () => {
     await connection.open(); 
     const result = await connection.sql`INSERT INTO category (name) VALUES 
     ${bulkMap(array, item => tuple(item.name))}`;
-    assertEquals(result, 3);
+    assertEquals(result, array.length);
     await connection.close();
 });
