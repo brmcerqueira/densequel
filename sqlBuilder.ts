@@ -1,7 +1,9 @@
+import * as log from "https://deno.land/std/log/mod.ts";
 import { NestedExpression } from "./nested/nestedExpression.ts";
 import { SqlProvider } from "./sqlProvider.ts";
 
 export class SqlBuilder {
+    private logger = log.getLogger();
     private _binds: string[] = [];
     private _args: { [key: string]: any } = {};
     private index = 1;
@@ -54,8 +56,7 @@ export class SqlBuilder {
     }
 
     public toString(): string {
-        console.log(this.content);
-        console.log(this._args);
+        this.logger.info(`Sql => ${this.content} | Args => ${JSON.stringify(this._args)}`);
         return this.content;
     }
 }  
