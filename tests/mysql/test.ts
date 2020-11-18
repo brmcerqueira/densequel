@@ -8,7 +8,7 @@ Deno.test("select", async () => {
     await connection.open();
     const firstName = "B";
     const limit = 10;
-    const result: any[] = <any[]> await connection.sql`SELECT 
+    const result = await connection.sql`SELECT 
     first_name ${bind("firstName")}, 
     last_name ${bind("lastName")}
     FROM customer ${where($ => {
@@ -16,7 +16,7 @@ Deno.test("select", async () => {
             $.and`upper(first_name) LIKE upper(${`${firstName}%`})`;
         }
     })} LIMIT ${limit}`;
-    assert(result.length > 0);
+    assert(result.rows && result.rows?.length > 0);
     await connection.close();
 });
 
@@ -37,7 +37,7 @@ Deno.test("update dynamic", async () => {
         }      
     })}`;
 
-    assert(result > 0);
+    assert(result.affected && result.affected > 0);
     await connection.close();
 });
 
@@ -49,7 +49,7 @@ Deno.test("bulk insert", async () => {
         tuple("bulk insert 2"),
         tuple("bulk insert 3")
     )}`
-    assertEquals(result, 3);
+    assertEquals(result.affected, 3);
     await connection.close();
 });
 
@@ -63,6 +63,6 @@ Deno.test("bulkMap insert", async () => {
     await connection.open(); 
     const result = await connection.sql`INSERT INTO category (name) VALUES 
     ${bulkMap(array, item => tuple(item.name))}`;
-    assertEquals(result, array.length);
+    assertEquals(result.affected, array.length);
     await connection.close();
 });

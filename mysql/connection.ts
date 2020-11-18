@@ -1,5 +1,5 @@
 import { Client, ClientConfig } from "https://deno.land/x/mysql/mod.ts";
-import { SqlConnection } from "../sqlConnection.ts";
+import { SqlConnection, SqlResult } from "../sqlConnection.ts";
 import { sqlTemplate } from "../sqlTemplate.ts";
 import { SqlBuilder } from "../sqlBuilder.ts";
 import { SqlProvider } from "../sqlProvider.ts";
@@ -26,7 +26,7 @@ export class Connection implements SqlConnection {
         this.provider = new Provider();          
     }
 
-    public async sql<T>(strings: TemplateStringsArray, ...expressions: any[]): Promise<T[] | number> {
+    public async sql<T>(strings: TemplateStringsArray, ...expressions: any[]): Promise<SqlResult<T>> {
         const sqlBuilder = new SqlBuilder(this.provider);
         sqlTemplate(sqlBuilder, strings, ...expressions);
 
@@ -36,16 +36,18 @@ export class Connection implements SqlConnection {
             args.push(sqlBuilder.args[key]);
         }
 
-        const result = await this.client.execute(sqlBuilder.toString(), args);
+        const clientResult = await this.client.execute(sqlBuilder.toString(), args);
 
-        if (result.affectedRows) {
-            return result.affectedRows;
+        const result: SqlResult<T> = {};
+
+        if (clientResult.affectedRows) {
+            result.affected = clientResult.affectedRows;
         }
-        else if (sqlBuilder.binds.length > 0 && result.rows) {
-            return result.rows.map(row => {
+        else if (sqlBuilder.binds.length > 0 && clientResult.rows) {
+            result.rows = clientResult.rows.map(row => {
                 const tuple: { [key: string]: any } = {};
     
-                result.fields?.forEach((field, index) => {
+                clientResult.fields?.forEach((field, index) => {
                     tuple[sqlBuilder.binds[index] || field.name] = row[field.name];
                 });
             
@@ -53,8 +55,10 @@ export class Connection implements SqlConnection {
             });
         }
         else {
-            return <T[]> result.rows;
+            result.rows = clientResult.rows;
         }
+
+        return result;
     }
 
     public async open() {

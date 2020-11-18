@@ -1,6 +1,6 @@
 import { Client } from "https://deno.land/x/postgres/mod.ts";
 import { ConnectionOptions } from "https://deno.land/x/postgres/connection_params.ts";
-import { SqlConnection } from "../sqlConnection.ts";
+import { SqlConnection, SqlResult } from "../sqlConnection.ts";
 import { sqlTemplate } from "../sqlTemplate.ts";
 import { SqlBuilder } from "../sqlBuilder.ts";
 import { SqlProvider } from "../sqlProvider.ts";
@@ -28,7 +28,7 @@ export class Connection implements SqlConnection {
         this.provider = new Provider();          
     }
 
-    public async sql<T>(strings: TemplateStringsArray, ...expressions: any[]): Promise<T[] | number> {
+    public async sql<T>(strings: TemplateStringsArray, ...expressions: any[]): Promise<SqlResult<T>> {
         const sqlBuilder = new SqlBuilder(this.provider);
         sqlTemplate(sqlBuilder, strings, ...expressions);
 
@@ -38,30 +38,32 @@ export class Connection implements SqlConnection {
             args.push(sqlBuilder.args[key]);
         }
 
-        const result = await this.client.query(args.length > 0 ? {
+        const clientResult = await this.client.query(args.length > 0 ? {
             text: sqlBuilder.toString(),
             args: args
         } : sqlBuilder.toString());
 
-        result.rowCount
+        const result: SqlResult<T> = {};
 
         if (sqlBuilder.binds.length > 0) {
-            return result.rows.map(row => {
+            result.rows = clientResult.rows.map(row => {
                 const tuple: { [key: string]: any } = {};
     
-                result.rowDescription.columns.forEach((column, index) => {
+                clientResult.rowDescription.columns.forEach((column, index) => {
                     tuple[sqlBuilder.binds[index] || column.name] = row[index];
                 });
             
                 return <T> tuple;
             });
         }
-        else if (result.rows.length > 0) {
-            return <T[]> result.rowsOfObjects();
+        else if (clientResult.rows.length > 0) {
+            result.rows = <T[]> clientResult.rowsOfObjects();
         }
         else {
-            return result.rowCount || 0;
+            result.affected = clientResult.rowCount || 0;
         }
+
+        return result;
     }
 
     public async open() {
