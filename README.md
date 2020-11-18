@@ -12,7 +12,7 @@ Available at Deno Land: [Densequel](https://deno.land/x/densequel)
 
 ## Contents
 - [Connection](#connection)
-  - [MySQL/MariaDB](#mysql/mariadb)
+  - [MySQL or MariaDB](#mysql-or-mariadb)
   - [Postgres](#postgres)
 - [Tagged Template](#tagged-template)
   - [Arg](#arg)
@@ -26,7 +26,7 @@ Available at Deno Land: [Densequel](https://deno.land/x/densequel)
 
 ## Connection
 
-### MySQL/MariaDB
+### MySQL or MariaDB
 
 ### Postgres
 
